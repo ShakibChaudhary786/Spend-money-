@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spend Billionaires' Money</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #billionaire-select {
+            font-size: 18px;
+            padding: 10px;
+            margin: 20px;
+        }
+        #wealth-display {
+            font-size: 24px;
+            color: #1a5276;
+            margin: 20px 0;
+            font-weight: bold;
+            transition: all 0.1s ease;
+        }
+        #purchase-list {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-width: 1300px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 14px;
+            color: #27ae60;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            min-height: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #purchase-list span {
+            background-color: #ecf0f1;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        #items-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        .items-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 620px;
+            gap: 20px;
+        }
+        .item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 280px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            flex: 0 0 280px;
+        }
+        .item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: block;
+        }
+        .item h3 {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #333;
+        }
+        .item p {
+            font-size: 14px;
+            color: #e74c3c;
+            margin: 5px 0;
+        }
+        .quantity {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .quantity span {
+            font-size: 16px;
+            margin: 0 12px;
+        }
+        .quantity button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .quantity button.minus {
+            background-color: #e74c3c;
+        }
+        .quantity button:hover {
+            background-color: #27ae60;
+        }
+        .quantity button.minus:hover {
+            background-color: #c0392b;
+        }
+        .item button.buy {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+        .item button.buy:hover {
+            background-color: #2980b9;
+        }
+        #cart {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #27ae60;
+        }
+        #reset-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        #reset-button:hover {
+            background-color: #c0392b;
+        }
+        @media (max-width: 1200px) {
+            #items-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .items-group {
+                max-width: 620px;
+            }
+            #purchase-list {
+                max-width: 620px;
+            }
+        }
+        @media (max-width: 650px) {
+            .items-group {
+                flex-direction: column;
+                align-items: center;
+                max-width: 320px;
+            }
+            .item {
+                flex: 0 0 280px;
+            }
+            #purchase-list {
+                max-width: 320px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Spend a Billionaire's Money!</h1>
+    <select id="billionaire-select" onchange="updateWealth()">
+        <option value="elon">Elon Musk ($250 Billion)</option>
+        <option value="bill">Bill Gates ($120 Billion)</option>
+    </select>
+    <div id="wealth-display">Dollars Left: $250,000,000,000</div>
+    <div id="cart">Items Bought: 0 | Total Spent: $0</div>
+    <div id="purchase-list"></div>
+    <button id="reset-button" onclick="resetGame()">Reset Game</button>
+
+    <div id="items-container">
+        <!-- Group 1: 21 items -->
+        <div id="items-group1" class="items-group">
+            <div class="item">
+                <img src="luxury car.jpg" alt="Luxury Car">
+                <h3>Luxury Car</h3>
+                <p>$200,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('car-quantity')">-</button>
+                    <span id="car-quantity">1</span>
+                    <button onclick="incrementQuantity('car-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Luxury Car', 200000, 'car-quantity')">Buy Luxury Car</button>
+            </div>
+            <div class="item">
+                <img src="private jet.jpg" alt="Private Jet">
+                <h3>Private Jet</h3>
+                <p>$50,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('jet-quantity')">-</button>
+                    <span id="jet-quantity">1</span>
+                    <button onclick="incrementQuantity('jet-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Private Jet', 50000000, 'jet-quantity')">Buy Private Jet</button>
+            </div>
+            <div class="item">
+                <img src="private yatch.jpg" alt="Yacht">
+                <h3>Luxury Yacht</h3>
+                <p>$300,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('yacht-quantity')">-</button>
+                    <span id="yacht-quantity">1</span>
+                    <button onclick="incrementQuantity('yacht-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Luxury Yacht', 300000000, 'yacht-quantity')">Buy Luxury Yacht</button>
+            </div>
+            <div class="item">
+                <img src="mansion.jpg" alt="Mansion">
+                <h3>Mansion</h3>
+                <p>$10,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('mansion-quantity')">-</button>
+                    <span id="mansion-quantity">1</span>
+                    <button onclick="incrementQuantity('mansion-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Mansion', 10000000, 'mansion-quantity')">Buy Mansion</button>
+            </div>
+            <div class="item">
+                <img src="private island.jpg" alt="Island">
+                <h3>Private Island</h3>
+                <p>$500,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('island-quantity')">-</button>
+                    <span id="island-quantity">1</span>
+                    <button onclick="incrementQuantity('island-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Private Island', 500000000, 'island-quantity')">Buy Private Island</button>
+            </div>
+            <div class="item">
+                <img src="helicopter.jpg" alt="Helicopter">
+                <h3>Private Helicopter</h3>
+                <p>$15,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('helicopter-quantity')">-</button>
+                    <span id="helicopter-quantity">1</span>
+                    <button onclick="incrementQuantity('helicopter-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Private Helicopter', 15000000, 'helicopter-quantity')">Buy Private Helicopter</button>
+            </div>
+            <div class="item">
+                <img src="penthouse.jpg" alt="Penthouse">
+                <h3>Penthouse</h3>
+                <p>$25,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('penthouse-quantity')">-</button>
+                    <span id="penthouse-quantity">1</span>
+                    <button onclick="incrementQuantity('penthouse-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Penthouse', 25000000, 'penthouse-quantity')">Buy Penthouse</button>
+            </div>
+            <div class="item">
+                <img src="vine yard.jpg" alt="Vineyard">
+                <h3>Vineyard</h3>
+                <p>$100,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('vineyard-quantity')">-</button>
+                    <span id="vineyard-quantity">1</span>
+                    <button onclick="incrementQuantity('vineyard-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Vineyard', 100000000, 'vineyard-quantity')">Buy Vineyard</button>
+            </div>
+            <div class="item">
+                <img src="sports team.jpg" alt="Sports Team">
+                <h3>Sports Team</h3>
+                <p>$1,000,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('sportsteam-quantity')">-</button>
+                    <span id="sportsteam-quantity">1</span>
+                    <button onclick="incrementQuantity('sportsteam-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Sports Team', 1000000000, 'sportsteam-quantity')">Buy Sports Team</button>
+            </div>
+            <div class="item">
+                <img src="movie studio.jpg" alt="Movie Studio">
+                <h3>Movie Studio</h3>
+                <p>$2,000,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('moviestudio-quantity')">-</button>
+                    <span id="moviestudio-quantity">1</span>
+                    <button onclick="incrementQuantity('moviestudio-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Movie Studio', 2000000000, 'moviestudio-quantity')">Buy Movie Studio</button>
+            </div>
+            <div class="item">
+                <img src="iphone.jpg" alt="iPhone">
+                <h3>iPhone</h3>
+                <p>$1,500</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('iphone-quantity')">-</button>
+                    <span id="iphone-quantity">1</span>
+                    <button onclick="incrementQuantity('iphone-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('iPhone', 1500, 'iphone-quantity')">Buy iPhone</button>
+            </div>
+            <div class="item">
+                <img src="nike.jpg" alt="Nike Shoes">
+                <h3>Nike Shoes</h3>
+                <p>$200</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('nikeshoes-quantity')">-</button>
+                    <span id="nikeshoes-quantity">1</span>
+                    <button onclick="incrementQuantity('nikeshoes-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Nike Shoes', 200, 'nikeshoes-quantity')">Buy Nike Shoes</button>
+            </div>
+            <div class="item">
+                <img src="watch.jpg" alt="Luxury Watch">
+                <h3>Luxury Watch</h3>
+                <p>$10,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('watch-quantity')">-</button>
+                    <span id="watch-quantity">1</span>
+                    <button onclick="incrementQuantity('watch-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Luxury Watch', 10000, 'watch-quantity')">Buy Luxury Watch</button>
+            </div>
+            <div class="item">
+                <img src="gaming.jpg" alt="Gaming Console">
+                <h3>Gaming Console</h3>
+                <p>$500</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('console-quantity')">-</button>
+                    <span id="console-quantity">1</span>
+                    <button onclick="incrementQuantity('console-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Gaming Console', 500, 'console-quantity')">Buy Gaming Console</button>
+            </div>
+            <div class="item">
+                <img src="burger.jpg" alt="Big Burger">
+                <h3>Big Burger</h3>
+                <p>$10</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('burger-quantity')">-</button>
+                    <span id="burger-quantity">1</span>
+                    <button onclick="incrementQuantity('burger-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Big Burger', 10, 'burger-quantity')">Buy Big Burger</button>
+            </div>
+            <div class="item">
+                <img src="netflix.jpg" alt="Netflix Subscription">
+                <h3>Netflix Subscription (1 Year)</h3>
+                <p>$180</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('netflix-quantity')">-</button>
+                    <span id="netflix-quantity">1</span>
+                    <button onclick="incrementQuantity('netflix-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Netflix Subscription', 180, 'netflix-quantity')">Buy Netflix Subscription</button>
+            </div>
+            <div class="item">
+                <img src="disney.jpeg" alt="Disney Subscription">
+                <h3>Disney Subscription (1 Year)</h3>
+                <p>$150</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('disney-quantity')">-</button>
+                    <span id="disney-quantity">1</span>
+                    <button onclick="incrementQuantity('disney-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Disney Subscription', 150, 'disney-quantity')">Buy Disney Subscription</button>
+            </div>
+            <div class="item">
+                <img src="farmhous.jpg" alt="Farmhouse">
+                <h3>Farmhouse</h3>
+                <p>$2,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('farmhouse-quantity')">-</button>
+                    <span id="farmhouse-quantity">1</span>
+                    <button onclick="incrementQuantity('farmhouse-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Farmhouse', 2000000, 'farmhouse-quantity')">Buy Farmhouse</button>
+            </div>
+            <div class="item">
+                <img src="fridge.jpg" alt="Fridge">
+                <h3>Fridge</h3>
+                <p>$3,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('fridge-quantity')">-</button>
+                    <span id="fridge-quantity">1</span>
+                    <button onclick="incrementQuantity('fridge-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Fridge', 3000, 'fridge-quantity')">Buy Fridge</button>
+            </div>
+            <div class="item">
+                <img src="Kurkure.jpeg" alt="Kurkure">
+                <h3>Kurkure</h3>
+                <p>$1</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('kurkure-quantity')">-</button>
+                    <span id="kurkure-quantity">1</span>
+                    <button onclick="incrementQuantity('kurkure-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Kurkure', 1, 'kurkure-quantity')">Buy Kurkure</button>
+            </div>
+            <div class="item">
+                <img src="pizza.jpg" alt="Pizza">
+                <h3>Pizza</h3>
+                <p>$20</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('pizza-quantity')">-</button>
+                    <span id="pizza-quantity">1</span>
+                    <button onclick="incrementQuantity('pizza-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Pizza', 20, 'pizza-quantity')">Buy Pizza</button>
+            </div>
+        </div>
+        <!-- Group 2: 21 items -->
+        <div id="items-group2" class="items-group">
+            <div class="item">
+                <img src="handbag.jpg" alt="Designer Handbag">
+                <h3>Designer Handbag</h3>
+                <p>$5,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('handbag-quantity')">-</button>
+                    <span id="handbag-quantity">1</span>
+                    <button onclick="incrementQuantity('handbag-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Designer Handbag', 5000, 'handbag-quantity')">Buy Designer Handbag</button>
+            </div>
+            <div class="item">
+                <img src="chef.jpg" alt="Private Chef">
+                <h3>Private Chef (1 Year)</h3>
+                <p>$100,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('chef-quantity')">-</button>
+                    <span id="chef-quantity">1</span>
+                    <button onclick="incrementQuantity('chef-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Private Chef', 100000, 'chef-quantity')">Buy Private Chef</button>
+            </div>
+            <div class="item">
+                <img src="concert.jpg" alt="Concert Tickets">
+                <h3>Concert Tickets (VIP)</h3>
+                <p>$2,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('concert-quantity')">-</button>
+                    <span id="concert-quantity">1</span>
+                    <button onclick="incrementQuantity('concert-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Concert Tickets', 2000, 'concert-quantity')">Buy Concert Tickets</button>
+            </div>
+            <div class="item">
+                <img src="land.jpg" alt="Prime Land">
+                <h3>Prime Land (1 Acre)</h3>
+                <p>$5,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('land-quantity')">-</button>
+                    <span id="land-quantity">1</span>
+                    <button onclick="incrementQuantity('land-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Prime Land', 5000000, 'land-quantity')">Buy Prime Land</button>
+            </div>
+            <div class="item">
+                <img src="theater.jpg" alt="Home Theater System">
+                <h3>Luxury Home Theater</h3>
+                <p>$2,500,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('theater-quantity')">-</button>
+                    <span id="theater-quantity">1</span>
+                    <button onclick="incrementQuantity('theater-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Luxury Home Theater', 2500000, 'theater-quantity')">Buy Luxury Home Theater</button>
+            </div>
+            <div class="item">
+                <img src="monalisa.jpg" alt="Mona Lisa">
+                <h3>Mona Lisa</h3>
+                <p>$1,000,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('monalisa-quantity')">-</button>
+                    <span id="monalisa-quantity">1</span>
+                    <button onclick="incrementQuantity('monalisa-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Mona Lisa', 1000000000, 'monalisa-quantity')">Buy Mona Lisa</button>
+            </div>
+            <div class="item">
+                <img src="Zoo.jpg" alt="Zoo">
+                <h3>Private Zoo</h3>
+                <p>$150,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('zoo-quantity')">-</button>
+                    <span id="zoo-quantity">1</span>
+                    <button onclick="incrementQuantity('zoo-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Private Zoo', 150000000, 'zoo-quantity')">Buy Private Zoo</button>
+            </div>
+            <div class="item">
+                <img src="mac.png" alt="MacBook">
+                <h3>MacBook</h3>
+                <p>$1,500</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('macbook-quantity')">-</button>
+                    <span id="macbook-quantity">1</span>
+                    <button onclick="incrementQuantity('macbook-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('MacBook', 1500, 'macbook-quantity')">Buy MacBook</button>
+            </div>
+            <div class="item">
+                <img src="ferrari.jpg" alt="Ferrari">
+                <h3>Ferrari</h3>
+                <p>$400,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('ferrari-quantity')">-</button>
+                    <span id="ferrari-quantity">1</span>
+                    <button onclick="incrementQuantity('ferrari-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Ferrari', 400000, 'ferrari-quantity')">Buy Ferrari</button>
+            </div>
+            <div class="item">
+                <img src="bugatti.jpg" alt="Bugatti">
+                <h3>Bugatti</h3>
+                <p>$3,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('bugatti-quantity')">-</button>
+                    <span id="bugatti-quantity">1</span>
+                    <button onclick="incrementQuantity('bugatti-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Bugatti', 3000000, 'bugatti-quantity')">Buy Bugatti</button>
+            </div>
+            <div class="item">
+                <img src="rolls.jpg" alt="Rolls-Royce">
+                <h3>Rolls-Royce</h3>
+                <p>$500,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('rollsroyce-quantity')">-</button>
+                    <span id="rollsroyce-quantity">1</span>
+                    <button onclick="incrementQuantity('rollsroyce-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Rolls-Royce', 500000, 'rollsroyce-quantity')">Buy Rolls-Royce</button>
+            </div>
+            <div class="item">
+                <img src="cola.jpg" alt="Coca-Cola bottle">
+                <h3>Coca-Cola bottle</h3>
+                <p>$2</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('cocacola-quantity')">-</button>
+                    <span id="cocacola-quantity">1</span>
+                    <button onclick="incrementQuantity('cocacola-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Coca-Cola Can', 2, 'cocacola-quantity')">Buy Coca-Cola Can</button>
+            </div>
+            <div class="item">
+                <img src="pepsi.jpg" alt="Pepsi Can">
+                <h3>Pepsi Can</h3>
+                <p>$2</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('pepsi-quantity')">-</button>
+                    <span id="pepsi-quantity">1</span>
+                    <button onclick="incrementQuantity('pepsi-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Pepsi Can', 2, 'pepsi-quantity')">Buy Pepsi Can</button>
+            </div>
+            <div class="item">
+                <img src="NBA.png" alt="NBA Team">
+                <h3>NBA Team</h3>
+                <p>$3,000,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('nbateam-quantity')">-</button>
+                    <span id="nbateam-quantity">1</span>
+                    <button onclick="incrementQuantity('nbateam-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('NBA Team', 3000000000, 'nbateam-quantity')">Buy NBA Team</button>
+            </div>
+            <div class="item">
+                <img src="jelly.jpeg" alt="Café Jelly">
+                <h3>Café Jelly</h3>
+                <p>$5</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('jelly-quantity')">-</button>
+                    <span id="jelly-quantity">1</span>
+                    <button onclick="incrementQuantity('jelly-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Café Jelly', 5, 'jelly-quantity')">Buy Café Jelly</button>
+            </div>
+            <div class="item">
+                <img src="necklace.png" alt="Gold Necklace">
+                <h3>Gold Necklace</h3>
+                <p>$2,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('necklace-quantity')">-</button>
+                    <span id="necklace-quantity">1</span>
+                    <button onclick="incrementQuantity('necklace-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Gold Necklace', 2000, 'necklace-quantity')">Buy Gold Necklace</button>
+            </div>
+            <div class="item">
+                <img src="ring.png" alt="Diamond Ring">
+                <h3>Diamond Ring</h3>
+                <p>$10,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('ring-quantity')">-</button>
+                    <span id="ring-quantity">1</span>
+                    <button onclick="incrementQuantity('ring-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Diamond Ring', 10000, 'ring-quantity')">Buy Diamond Ring</button>
+            </div>
+            <div class="item">
+                <img src="diamond.png" alt="Diamond">
+                <h3>Diamond</h3>
+                <p>$50,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('diamond-quantity')">-</button>
+                    <span id="diamond-quantity">1</span>
+                    <button onclick="incrementQuantity('diamond-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Diamond', 50000, 'diamond-quantity')">Buy Diamond</button>
+            </div>
+            <div class="item">
+                <img src="GDP.jpeg" alt="Pakistan's GDP">
+                <h3>Pakistan's GDP</h3>
+                <p>$340,000,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('gdp-quantity')">-</button>
+                    <span id="gdp-quantity">1</span>
+                    <button onclick="incrementQuantity('gdp-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Pakistan\'s GDP', 340000000000, 'gdp-quantity')">Buy Pakistan's GDP</button>
+            </div>
+            <div class="item">
+                <img src="IPL.png" alt="IPL Team">
+                <h3>IPL Team</h3>
+                <p>$1,000,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('iplteam-quantity')">-</button>
+                    <span id="iplteam-quantity">1</span>
+                    <button onclick="incrementQuantity('iplteam-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('IPL Team', 1000000000, 'iplteam-quantity')">Buy IPL Team</button>
+            </div>
+            <div class="item">
+                <img src="sleeper.jpeg" alt="Sleeper">
+                <h3>Luxury Sleeper Car</h3>
+                <p>$1,000,000</p>
+                <div class="quantity">
+                    <button class="minus" onclick="decrementQuantity('sleeper-quantity')">-</button>
+                    <span id="sleeper-quantity">1</span>
+                    <button onclick="incrementQuantity('sleeper-quantity')">+</button>
+                </div>
+                <button class="buy" onclick="buyItem('Luxury Sleeper Car', 1000000, 'sleeper-quantity')">Buy Luxury Sleeper Car</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let wealth = {
+            elon: 250000000000,
+            bill: 120000000000
+        };
+        let currentBillionaire = 'elon';
+        let currentWealth = wealth.elon;
+        let displayedWealth = currentWealth;
+        let totalSpent = 0;
+        let itemsBought = 0;
+        let purchasedItems = []; // Array to store purchased items
+
+        function updateWealth() {
+            currentBillionaire = document.getElementById('billionaire-select').value;
+            currentWealth = wealth[currentBillionaire];
+            displayedWealth = currentWealth;
+            totalSpent = 0;
+            itemsBought = 0;
+            purchasedItems = []; // Clear purchased items
+            document.querySelectorAll('.quantity span').forEach(span => {
+                span.textContent = '1';
+            });
+            updateDisplay();
+            updatePurchaseList();
+        }
+
+        function incrementQuantity(quantityId) {
+            const quantityElement = document.getElementById(quantityId);
+            let quantity = parseInt(quantityElement.textContent);
+            quantity++;
+            quantityElement.textContent = quantity;
+        }
+
+        function decrementQuantity(quantityId) {
+            const quantityElement = document.getElementById(quantityId);
+            let quantity = parseInt(quantityElement.textContent);
+            if (quantity > 1) {
+                quantity--;
+                quantityElement.textContent = quantity;
+            }
+        }
+
+        function buyItem(itemName, price, quantityId) {
+            const quantity = parseInt(document.getElementById(quantityId).textContent);
+            const totalPrice = price * quantity;
+            if (currentWealth >= totalPrice) {
+                currentWealth -= totalPrice;
+                totalSpent += totalPrice;
+                itemsBought += quantity;
+                
+                // Update purchased items
+                const existingItem = purchasedItems.find(item => item.name === itemName);
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    purchasedItems.push({ name: itemName, quantity });
+                }
+                
+                animateWealth(totalPrice);
+                updatePurchaseList();
+            } else {
+                alert(`Not enough money to buy ${quantity} ${itemName}(s)!`);
+            }
+        }
+
+        function updatePurchaseList() {
+            const purchaseList = document.getElementById('purchase-list');
+            if (purchasedItems.length === 0) {
+                purchaseList.innerHTML = '<span>No items purchased yet</span>';
+            } else {
+                purchaseList.innerHTML = purchasedItems
+                    .map(item => `<span>${item.name} x${item.quantity}</span>`)
+                    .join('');
+            }
+        }
+
+        function animateWealth(totalPrice) {
+            const duration = 1000;
+            const steps = 60;
+            const decrement = totalPrice / steps;
+            let currentStep = 0;
+
+            function step() {
+                if (currentStep < steps) {
+                    displayedWealth -= decrement;
+                    document.getElementById('wealth-display').textContent = 
+                        `Dollars Left: $${Math.max(0, Math.floor(displayedWealth)).toLocaleString()}`;
+                    currentStep++;
+                    requestAnimationFrame(step);
+                } else {
+                    displayedWealth = currentWealth;
+                    updateDisplay();
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+        function resetGame() {
+            currentWealth = wealth[currentBillionaire];
+            displayedWealth = currentWealth;
+            totalSpent = 0;
+            itemsBought = 0;
+            purchasedItems = []; // Clear purchased items
+            document.querySelectorAll('.quantity span').forEach(span => {
+                span.textContent = '1';
+            });
+            updateDisplay();
+            updatePurchaseList();
+        }
+
+        function updateDisplay() {
+            document.getElementById('wealth-display').textContent = 
+                `Dollars Left: $${Math.floor(displayedWealth).toLocaleString()}`;
+            document.getElementById('cart').textContent = 
+                `Items Bought: ${itemsBought} | Total Spent: $${totalSpent.toLocaleString()}`;
+        }
+    </script>
+</body>
+</html>
